@@ -1,86 +1,343 @@
-/* style.css */
+/* styles.css */
 :root {
-    --primary-color: #0366d6;
-    --bg-color: #f6f8fa;
-    --text-color: #24292e;
-    --border-color: #e1e4e8;
+    --color-primary: #1E3A8A; 
+    --color-accent: #3B82F6; 
+    --color-bg: #F8FAFC; 
+    --color-border: #E5E7EB; 
+    --color-text-main: #1F2937;
+    --color-text-muted: #6B7280;
+    --color-white: #FFFFFF;
+    
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.05);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text-main);
     line-height: 1.6;
-    margin: 0;
-    padding: 20px;
+    padding: 2rem 1rem;
 }
 
-#app-wrapper {
+.app-container {
     max-width: 800px;
     margin: 0 auto;
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    background-color: var(--color-white);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
 }
 
-/* Progress Bar */
-.progress-bar-bg {
-    background-color: var(--border-color);
-    height: 10px;
-    border-radius: 5px;
+/* Header */
+.app-header {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 2rem;
+    text-align: center;
+}
+
+.app-header h1 {
+    font-size: 1.75rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.app-header p {
+    color: #BFDBFE; 
+    font-size: 0.95rem;
+}
+
+/* Progress */
+.progress-section {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-white);
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+}
+
+.progress-bar-container {
+    height: 8px;
+    background-color: var(--color-border);
+    border-radius: 4px;
     overflow: hidden;
-    margin-bottom: 20px;
 }
 
 .progress-bar-fill {
-    background-color: var(--primary-color);
     height: 100%;
-    transition: width 0.3s ease;
+    background-color: var(--color-accent);
+    width: 0%;
+    transition: width 0.4s ease;
 }
 
-/* Questions */
-.question-block {
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
+/* Form & Cards */
+.form-container {
+    padding: 2rem;
+    min-height: 300px;
 }
 
-.options-group {
+.question-card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.2s ease;
+}
+
+.question-card:hover {
+    border-color: #CBD5E1;
+}
+
+.question-title {
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+    color: var(--color-primary);
+}
+
+/* Custom Radio / Likert Options */
+.options-container {
     display: flex;
-    gap: 15px;
-    margin-top: 10px;
+    flex-direction: column;
+    gap: 0.75rem;
 }
 
-.options-group label {
+.options-container.likert-style {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.option-label {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
     cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: var(--color-white);
+    flex: 1;
+    justify-content: center;
+    text-align: center;
 }
 
-/* Buttons */
-.navigation-buttons {
+.option-label:hover {
+    background-color: var(--color-bg);
+    border-color: var(--color-accent);
+}
+
+.option-label input[type="radio"] {
+    display: none;
+}
+
+.option-label.selected {
+    background-color: #EFF6FF; 
+    border-color: var(--color-accent);
+    color: var(--color-primary);
+    font-weight: 500;
+    box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+/* Navigation */
+.app-footer {
+    padding: 1.5rem 2rem;
+    background-color: var(--color-bg);
+    border-top: 1px solid var(--color-border);
     display: flex;
     justify-content: space-between;
-    margin-top: 30px;
 }
 
-button {
-    background-color: var(--primary-color);
-    color: white;
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    border-radius: var(--radius-md);
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    transition: all 0.2s ease;
 }
 
-button:disabled {
-    background-color: #a3c2e8;
+.btn-primary {
+    background-color: var(--color-accent);
+    color: var(--color-white);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #2563EB; 
+}
+
+.btn-secondary {
+    background-color: var(--color-white);
+    color: var(--color-text-main);
+    border: 1px solid var(--color-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background-color: #F1F5F9;
+}
+
+.btn:disabled {
+    opacity: 0.5;
     cursor: not-allowed;
 }
 
-/* Print Optimization for PDF (Phase 3 Prep) */
+.hidden {
+    display: none !important;
+}
+
+/* Dashboard & Results Styling */
+.results-container {
+    padding: 2rem;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.results-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.overall-score-card {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    margin-top: 1.5rem;
+    box-shadow: var(--shadow-md);
+}
+
+.overall-score-card p {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    color: #BFDBFE;
+    margin-bottom: 0.5rem;
+}
+
+.overall-score-card h3 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.overall-score-text {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.breakdown-header h3 {
+    color: var(--color-primary);
+    margin-bottom: 1.5rem;
+    border-bottom: 2px solid var(--color-border);
+    padding-bottom: 0.5rem;
+}
+
+.category-score-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.25rem;
+}
+
+.category-name {
+    width: 35%;
+    font-weight: 500;
+    color: var(--color-text-main);
+    font-size: 0.95rem;
+}
+
+.category-bar-bg {
+    width: 55%;
+    background-color: var(--color-border);
+    height: 12px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 0 15px;
+}
+
+.category-bar-fill {
+    height: 100%;
+    background-color: var(--color-accent);
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.category-score-text {
+    width: 10%;
+    text-align: right;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+.results-actions {
+    margin-top: 3rem;
+    text-align: center;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    .options-container.likert-style {
+        flex-direction: column;
+    }
+    .app-container {
+        border-radius: 0;
+    }
+    .category-score-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .category-name, .category-bar-bg, .category-score-text {
+        width: 100%;
+        margin: 5px 0;
+        text-align: left;
+    }
+}
+
+/* PDF Print Optimization */
 @media print {
-    body { background-color: white; }
-    #app-wrapper { box-shadow: none; padding: 0; }
-    .navigation-buttons, .dashboard-actions { display: none !important; }
+    body { 
+        background-color: white; 
+        padding: 0; 
+    }
+    .app-container { 
+        box-shadow: none; 
+        max-width: 100%; 
+        border: none;
+    }
+    .app-header, 
+    .progress-section, 
+    .app-footer, 
+    .results-actions { 
+        display: none !important; 
+    }
+    .results-container { 
+        display: block !important; 
+        padding: 0; 
+    }
+    .overall-score-card, 
+    .category-bar-bg, 
+    .category-bar-fill {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    .category-bar-bg { background-color: #E5E7EB !important; }
 }
