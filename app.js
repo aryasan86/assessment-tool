@@ -1,113 +1,214 @@
-// app.js
+// script.js
 
-// State Management
-let currentCategoryIndex = 0;
-let userAnswers = {}; // Format: { "q1": 5, "q2": 3, ... }
+// State variables
+let currentStep = 0;
+const userAnswers = {};
 
 // DOM Elements
-const titleEl = document.getElementById('app-title');
-const currentCategoryTitleEl = document.getElementById('current-category-title');
-const questionAreaEl = document.getElementById('question-area');
-const btnNext = document.getElementById('btn-next');
+const stepLabelEl = document.getElementById('step-label');
+const progressBarFillEl = document.getElementById('progress-bar-fill');
+const progressPercentageEl = document.getElementById('progress-percentage');
+const formContainerEl = document.getElementById('form-container');
 const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
 const btnSubmit = document.getElementById('btn-submit');
-const progressFill = document.getElementById('progress-fill');
-const assessmentView = document.getElementById('assessment-view');
-const resultsView = document.getElementById('results-view');
 
-// Initialization
 function init() {
-    titleEl.textContent = assessmentConfig.title;
-    renderCategory(currentCategoryIndex);
+    renderStep();
+    attachEventListeners();
 }
 
-// Render the current category and its questions
-function renderCategory(index) {
-    const category = assessmentConfig.categories[index];
-    currentCategoryTitleEl.textContent = category.title;
+function renderStep() {
+    const category = assessmentData[currentStep];
+    const totalSteps = assessmentData.length;
     
-    // Clear previous questions
-    questionAreaEl.innerHTML = '';
+    // Update Progress UI
+    stepLabelEl.textContent = `Step ${currentStep + 1} of ${totalSteps}: ${category.title}`;
+    const progress = (currentStep / totalSteps) * 100;
+    progressBarFillEl.style.width = `${progress}%`;
+    progressPercentageEl.textContent = `${Math.round(progress)}%`;
 
-    category.questions.forEach(q => {
-        const questionDiv = document.createElement('div');
-        questionDiv.className = 'question-block';
+    // Clear previous form content
+    formContainerEl.innerHTML = '';
+
+    // Generate Question Cards
+    category.questions.forEach(question => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
         
-        // Build the HTML for the options dynamically
-        let optionsHtml = '<div class="options-group">';
-        q.options.forEach(opt => {
-            const isChecked = userAnswers[q.id] === opt ? 'checked' : '';
-            optionsHtml += `
-                <label>
-                    <input type="radio" name="${q.id}" value="${opt}" ${isChecked} onchange="saveAnswer('${q.id}', ${opt})">
-                    ${opt}
-                </label>
-            `;
-        });
-        optionsHtml += '</div>';
+        const title = document.createElement('h3');
+        title.className = 'question-title';
+        title.textContent = question.text;
+        card.appendChild(title);
 
-        questionDiv.innerHTML = `
-            <p><strong>${q.text}</strong></p>
-            ${optionsHtml}
-        `;
-        questionAreaEl.appendChild(questionDiv);
+        const optionsContainer = document.createElement('div');
+        optionsContainer.className = `options-container ${question.type === 'likert' ? 'likert-style' : ''}`;
+
+        question.options.forEach(option => {
+            const label = document.createElement('label');
+            label.className = 'option-label';
+            
+            if (userAnswers[question.id] == option.value) {
+                label.classList.add('selected');
+            }
+
+            const input = document.createElement('input');
+            input.type = 'radio';
+            input.name = question.id;
+            input.value = option.value;
+            
+            if (userAnswers[question.id] == option.value) {
+                input.checked = true;
+            }
+
+            input.addEventListener('change', (e) => {
+                userAnswers[question.id] = e.target.value;
+                
+                const siblings = optionsContainer.querySelectorAll('.option-label');
+                siblings.forEach(sib => sib.classList.remove('selected'));
+                label.classList.add('selected');
+
+                validateCurrentStep();
+            });
+
+            label.appendChild(input);
+            label.appendChild(document.createTextNode(option.label));
+            optionsContainer.appendChild(label);
+        });
+
+        card.appendChild(optionsContainer);
+        formContainerEl.appendChild(card);
     });
 
-    updateUI();
+    updateNavigationButtons();
+    validateCurrentStep(); 
 }
 
-// Save answer to state
-window.saveAnswer = function(questionId, value) {
-    userAnswers[questionId] = value;
-};
-
-// Update buttons and progress bar
-function updateUI() {
-    const totalCategories = assessmentConfig.categories.length;
+function validateCurrentStep() {
+    const currentQuestions = assessmentData[currentStep].questions;
+    const isStepComplete = currentQuestions.every(q => userAnswers[q.id] !== undefined);
     
-    // Progress Bar
-    const progressPercent = ((currentCategoryIndex) / totalCategories) * 100;
-    progressFill.style.width = `${progressPercent}%`;
-
-    // Buttons
-    btnPrev.disabled = currentCategoryIndex === 0;
-    
-    if (currentCategoryIndex === totalCategories - 1) {
-        btnNext.style.display = 'none';
-        btnSubmit.style.display = 'block';
+    if (isStepComplete) {
+        btnNext.disabled = false;
+        btnSubmit.disabled = false;
     } else {
-        btnNext.style.display = 'block';
-        btnSubmit.style.display = 'none';
+        btnNext.disabled = true;
+        btnSubmit.disabled = true;
     }
 }
 
-// Event Listeners
-btnNext.addEventListener('click', () => {
-    if (currentCategoryIndex < assessmentConfig.categories.length - 1) {
-        currentCategoryIndex++;
-        renderCategory(currentCategoryIndex);
+function updateNavigationButtons() {
+    btnPrev.disabled = currentStep === 0;
+
+    if (currentStep === assessmentData.length - 1) {
+        btnNext.classList.add('hidden');
+        btnSubmit.classList.remove('hidden');
+    } else {
+        btnNext.classList.remove('hidden');
+        btnSubmit.classList.add('hidden');
     }
-});
+}
 
-btnPrev.addEventListener('click', () => {
-    if (currentCategoryIndex > 0) {
-        currentCategoryIndex--;
-        renderCategory(currentCategoryIndex);
-    }
-});
+function attachEventListeners() {
+    btnNext.addEventListener('click', () => {
+        if (currentStep < assessmentData.length - 1) {
+            currentStep++;
+            renderStep();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
 
-btnSubmit.addEventListener('click', () => {
-    // For Phase 1, we just log the data. Phase 2 & 3 will build the Dashboard and Google Sheet Sync.
-    console.log("Assessment Complete!", userAnswers);
-    alert("Assessment Submitted! Check browser console for data.");
-    
-    // Set progress to 100% on submit
-    progressFill.style.width = '100%'; 
-    
-    // Hide form, show results view (to be built out in Phase 3)
-    assessmentView.style.display = 'none';
-    resultsView.style.display = 'block';
-});
+    btnPrev.addEventListener('click', () => {
+        if (currentStep > 0) {
+            currentStep--;
+            renderStep();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    });
 
-// Boot up the app
+    btnSubmit.addEventListener('click', () => {
+        // Complete progress bar visually
+        progressBarFillEl.style.width = '100%';
+        progressPercentageEl.textContent = '100%';
+        
+        // 1. Calculate Scores
+        let totalScore = 0;
+        let maxTotalScore = 0;
+        const categoryScores = [];
+
+        // Map MCQ options to point values
+        const mcqScoringMap = { 'a': 1, 'b': 3, 'c': 5 };
+
+        assessmentData.forEach(cat => {
+            let catScore = 0;
+            let catMax = cat.questions.length * 5; // Max 5 points per question
+
+            cat.questions.forEach(q => {
+                const ans = userAnswers[q.id];
+                if (q.type === 'likert') {
+                    catScore += parseInt(ans);
+                } else if (q.type === 'mcq') {
+                    catScore += mcqScoringMap[ans] || 0;
+                }
+            });
+
+            totalScore += catScore;
+            maxTotalScore += catMax;
+
+            // Save clean category name
+            const cleanTitle = cat.title.includes(': ') ? cat.title.split(': ')[1] : cat.title;
+
+            categoryScores.push({
+                title: cleanTitle,
+                percentage: Math.round((catScore / catMax) * 100)
+            });
+        });
+
+        const overallPercentage = Math.round((totalScore / maxTotalScore) * 100);
+
+        // 2. Determine Performance Band
+        let band = "Novice";
+        if (overallPercentage >= 50) band = "Intermediate";
+        if (overallPercentage >= 75) band = "Advanced";
+        if (overallPercentage >= 90) band = "Master";
+
+        // 3. Render Dashboard
+        formContainerEl.classList.add('hidden');
+        document.querySelector('.progress-section').classList.add('hidden');
+        document.querySelector('.app-footer').classList.add('hidden');
+        
+        const resultsContainer = document.getElementById('results-container');
+        resultsContainer.classList.remove('hidden');
+
+        document.getElementById('overall-band').textContent = band;
+        document.getElementById('overall-score-val').textContent = overallPercentage;
+
+        const breakdownEl = document.getElementById('category-breakdown');
+        breakdownEl.innerHTML = '';
+
+        categoryScores.forEach(cat => {
+            breakdownEl.innerHTML += `
+                <div class="category-score-row">
+                    <div class="category-name">${cat.title}</div>
+                    <div class="category-bar-bg">
+                        <div class="category-bar-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="category-score-text">${cat.percentage}%</div>
+                </div>
+            `;
+        });
+
+        setTimeout(() => {
+            const bars = breakdownEl.querySelectorAll('.category-bar-fill');
+            bars.forEach((bar, index) => {
+                bar.style.width = `${categoryScores[index].percentage}%`;
+            });
+        }, 100);
+
+        console.log("Final Assessment Payload ready for Google Sheets:", JSON.stringify(userAnswers));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+}
+
+// Boot application
 init();
