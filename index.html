@@ -3,44 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assessment Tool</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Enterprise Assessment Tool</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="app-wrapper">
-        <header>
-            <h1 id="app-title">Assessment Tool</h1>
-            <div class="progress-bar-bg" id="progress-container">
-                <div class="progress-bar-fill" id="progress-fill" style="width: 0%;"></div>
-            </div>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>Assessment Tool</h1>
+            <p>Please complete all questions in each section to proceed.</p>
         </header>
 
-        <main id="assessment-view">
-            <div id="category-title-area">
-                <h2 id="current-category-title">Loading...</h2>
+        <section class="progress-section">
+            <div class="progress-info">
+                <span id="step-label">Step 1 of 8: Loading...</span>
+                <span id="progress-percentage">0%</span>
             </div>
-            
-            <div id="question-area"></div>
-
-            <div class="navigation-buttons">
-                <button id="btn-prev" disabled>Previous</button>
-                <button id="btn-next">Next</button>
-                <button id="btn-submit" style="display: none;">Submit Assessment</button>
-            </div>
-        </main>
-
-        <section id="results-view" style="display: none;">
-            <h2>Your Assessment Dashboard</h2>
-            
-            <div id="score-breakdown-area"></div>
-            
-            <div class="dashboard-actions">
-                <button id="btn-print" onclick="window.print()">Save Results as PDF</button>
+            <div class="progress-bar-container">
+                <div id="progress-bar-fill" class="progress-bar-fill"></div>
             </div>
         </section>
+
+        <main id="form-container" class="form-container">
+            </main>
+
+        <section id="results-container" class="results-container hidden">
+            <div class="results-header">
+                <h2>Assessment Results</h2>
+                <div class="overall-score-card">
+                    <p>Maturity Level</p>
+                    <h3 id="overall-band">Calculating...</h3>
+                    <div class="overall-score-text">Score: <span id="overall-score-val">0</span>%</div>
+                </div>
+            </div>
+            
+            <div class="breakdown-header">
+                <h3>Category Breakdown</h3>
+            </div>
+            <div id="category-breakdown" class="category-breakdown">
+                </div>
+            
+            <div class="results-actions">
+                <button id="btn-print" class="btn btn-primary" onclick="window.print()">Save as PDF</button>
+            </div>
+        </section>
+
+        <footer class="app-footer">
+            <button id="btn-prev" class="btn btn-secondary" disabled>Previous</button>
+            <button id="btn-next" class="btn btn-primary" disabled>Next</button>
+            <button id="btn-submit" class="btn btn-primary hidden">Submit Assessment</button>
+        </footer>
     </div>
 
-    <script src="config.js"></script>
-    <script src="app.js"></script>
+    <script src="questions.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
