@@ -14,13 +14,22 @@
         </header>
 
         <section class="progress-section">
-            <div class="progress-info">
-                <span id="step-label">Step 1 of 8: Loading...</span>
-                <span id="progress-percentage">0%</span>
+            <div class="progress-header">
+                <div class="progress-title-area">
+                    <div id="step-counter" class="step-counter">CATEGORY 1 OF 8</div>
+                    <h2 id="current-category-name" class="current-category-name">Loading...</h2>
+                </div>
+                <div class="progress-percentage-area">
+                    <span id="progress-percentage">0% Complete</span>
+                </div>
             </div>
+            
             <div class="progress-bar-container">
                 <div id="progress-bar-fill" class="progress-bar-fill"></div>
             </div>
+
+            <div class="stepper-wrapper" id="stepper-wrapper">
+                </div>
         </section>
 
         <main id="form-container" class="form-container">
